@@ -1,0 +1,21 @@
+# 前端
+node_modules/
+dist/
+
+# Go
+*.exe
+*.test
+*.out
+
+# nginx：nginx.exe 进 git（clone 即用），运行产物和无关文档忽略
+!nginx/nginx.exe
+nginx/logs/
+nginx/temp/
+nginx/docs/
+nginx/contrib/
+nginx/.hgtags
+
+# 本地环境
+.env
+.env.local
+*.log
