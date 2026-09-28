@@ -4,12 +4,19 @@ import (
 	"bytes"
 	"encoding/json"
 	"net/http"
+	"os"
 
 	"github.com/mrzhao-1/microservices-lab/user-svc/internal/biz"
 )
 
-// notification-svc 的地址。v2 换成 NATS 消息总线 + go-micro broker 订阅。
-const notifyAddr = "http://localhost:8081/notify"
+// notifyAddr 返回 notification-svc 的地址。默认 localhost:8081，
+// 可用环境变量 NOTIFY_SVC_ADDR 覆盖（K8s 里指向 notification-svc Service）。
+func notifyAddr() string {
+	if a := os.Getenv("NOTIFY_SVC_ADDR"); a != "" {
+		return a
+	}
+	return "http://localhost:8081/notify"
+}
 
 // UserService 是 service 层（对应 DDD 的 application 层），负责 DTO 转换，不做复杂业务。
 type UserService struct {
@@ -62,7 +69,7 @@ func (s *UserService) notify(u *biz.User) {
 			"username": u.Username,
 			"email":    u.Email,
 		})
-		_, _ = http.Post(notifyAddr, "application/json", bytes.NewReader(body))
+		_, _ = http.Post(notifyAddr(), "application/json", bytes.NewReader(body))
 	}()
 }
 

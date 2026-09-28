@@ -1,0 +1,6 @@
+**/node_modules
+**/dist
+**/.git
+nginx/logs
+nginx/temp
+*.exe

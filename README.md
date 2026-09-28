@@ -37,34 +37,20 @@ microservices-lab/
 ├── notification-svc/    go-micro 异步通知服务
 ├── frontend/            Vue3 + Vite 前端（一个注册页）
 ├── nginx/               nginx 1.26.3（已装进项目：托管前端 + 反代 /api）
+├── deploy/              两种运行环境的跑通方案（并列放置）
+│   ├── windows/         Windows 本地跑通说明
+│   └── k8s/             Kubernetes 跑通（Dockerfile + 清单）
 └── README.md
 ```
 
-## 启动（完整链路，含 nginx）
+## 运行（两种环境）
 
-1. 起 user-svc：`cd user-svc && go run ./cmd/server`
-2. 起 notification-svc：`cd notification-svc && go run ./cmd`
-3. 起 gateway：`cd gateway && go run .`
-4. 起 nginx：`cd nginx && nginx.exe`（前端产物已在 `nginx/html`，无需再 build）
-5. 浏览器打开 `http://localhost/`，页面注册即可走通全链路
+跑通方案按环境并列放在 `deploy/` 下，整个项目是同一套代码，只是运行环境不同：
 
-> nginx 已装进项目（`nginx/` 目录，1.26.3）。前端改过代码后，重新 `cd frontend && npm run build`，再把 `dist` 拷进 `nginx/html`。
-
-直接调接口验证（跳过浏览器）：
-
-```
-curl -X POST http://localhost/api/user/register \
-  -H "Content-Type: application/json" \
-  -d '{"username":"zhaohu","email":"zhaohu@example.com"}'
-```
-
-## 开发模式（不想用 nginx 时）
-
-前端用 Vite dev server 代理（`frontend/vite.config.js` 已配好，把 `/api` 转发到 8888）：
-
-```
-cd frontend && npm run dev
-```
+| 环境 | 说明 | 入口 |
+|---|---|---|
+| Windows 本地 | `go run` 起三个 Go 服务 + 项目内 nginx.exe | [deploy/windows/README.md](deploy/windows/README.md) |
+| Kubernetes | Docker 镜像 + K8s 清单，kind 集群里跑 | [deploy/k8s/README.md](deploy/k8s/README.md) |
 
 ## 关于 nginx
 
